@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ & CQ Exam Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Background gradient */
+        body {
+            background: linear-gradient(135deg, #3a3d40, #18191a);
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Title styling */
+        h1 {
+            color: #ffca28;
+            font-weight: bold;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form and card styling */
+        .card, .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Form button styling */
+        .btn-primary {
+            background: linear-gradient(to right, #ff6f61, #ffca28);
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 2rem;
+            transition: background 0.3s ease;
+            font-weight: bold;
+        }
+
+        /* Button hover effect */
+        .btn-primary:hover {
+            background: linear-gradient(to right, #ff8a65, #ffe082);
+            color: #333;
+        }
+
+        /* Text within cards */
+        .card-text {
+            color: #cfd8dc;
+        }
+
+        /* Chart container styling */
+        .card {
+            margin-top: 1.5rem;
+            padding: 1rem;
+        }
+
+        /* Field labels */
+        .form-label {
+            font-weight: 500;
+            color: #90caf9;
+        }
+
+        /* Gradient borders on input fields */
+        .form-control {
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        .form-control:focus {
+            border-color: #ffca28;
+            box-shadow: 0 0 10px rgba(255, 202, 40, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">MCQ & CQ Exam Tracker</h1>
+        <form id="examForm" class="mb-4">
+            <div class="mb-3"><label class="form-label">Exam Name</label><input type="text" class="form-control" id="examName" required></div>
+            <div class="mb-3"><label class="form-label">Total MCQ Marks</label><input type="number" class="form-control" id="totalMarksMCQ" required></div>
+            <div class="mb-3"><label class="form-label">Total CQ Marks</label><input type="number" class="form-control" id="totalMarksCQ" required></div>
+            <div class="mb-3"><label class="form-label">Correct MCQs</label><input type="number" class="form-control" id="correctMCQs" required></div>
+            <div class="mb-3"><label class="form-label">Incorrect MCQs</label><input type="number" class="form-control" id="incorrectMCQs" required></div>
+            <div class="mb-3"><label class="form-label">Obtained CQ Marks</label><input type="number" class="form-control" id="cqMarks" required></div>
+            <button type="button" class="btn btn-primary w-100" onclick="calculateResults()">Add Exam</button>
+        </form>
+
+        <div id="resultsContainer"></div>
+
+        <div id="overallResults" style="display:none;">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">Overall Exam Analysis</h5>
+                    <canvas id="overallChartCanvas" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const examsData = [];
+        function calculateResults() {
+            const examName = document.getElementById('examName').value.trim(),
+                totalMarksMCQ = parseFloat(document.getElementById('totalMarksMCQ').value),
+                totalMarksCQ = parseFloat(document.getElementById('totalMarksCQ').value),
+                correctMCQs = parseInt(document.getElementById('correctMCQs').value),
+                incorrectMCQs = parseInt(document.getElementById('incorrectMCQs').value),
+                cqMarks = parseFloat(document.getElementById('cqMarks').value);
+
+            if (!examName || isNaN(totalMarksMCQ) || isNaN(totalMarksCQ) || isNaN(correctMCQs) || isNaN(incorrectMCQs) || isNaN(cqMarks)) {
+                alert("Please fill out all fields with valid data.");
+                return;
+            }
+
+            const penalty = incorrectMCQs * 0.25, 
+                mcqScore = Math.max(0, correctMCQs - penalty),
+                finalScore = mcqScore + cqMarks,
+                accuracy = (correctMCQs + incorrectMCQs) > 0 ? ((correctMCQs / (correctMCQs + incorrectMCQs)) * 100).toFixed(2) : 0,
+                examData = { examName, mcqScore, cqMarks, finalScore, accuracy, totalCombinedMarks: totalMarksMCQ + totalMarksCQ };
+
+            examsData.push(examData);
+            document.getElementById('examForm').reset();
+            displayExamResults(examData);
+            updateOverallResults();
+        }
+
+        function displayExamResults(data) {
+            const card = document.createElement('div');
+            card.className = 'card mb-4';
+            card.innerHTML = `<div class="card-body">
+                <h5 class="card-title">${data.examName} Results</h5>
+                <p class="card-text">MCQ Score (after penalty): ${data.mcqScore}</p>
+                <p class="card-text">MCQ Accuracy: ${data.accuracy}%</p>
+                <p class="card-text">CQ Score: ${data.cqMarks}</p>
+                <p class="card-text">Final Score (MCQ + CQ): ${data.finalScore}</p>
+                <p class="card-text">Total Combined Marks: ${data.totalCombinedMarks}</p>
+                <canvas id="chartCanvas-${examsData.length}" height="100"></canvas>
+            </div>`;
+            document.getElementById('resultsContainer').appendChild(card);
+
+            new Chart(document.getElementById(`chartCanvas-${examsData.length}`).getContext('2d'), {
+                type: 'bar',
+                data: { labels: ['MCQ Score', 'CQ Score', 'Final Score'], datasets: [{ label: data.examName, data: [data.mcqScore, data.cqMarks, data.finalScore], backgroundColor: ['#ff8a65', '#4db6ac', '#ffca28'] }] }
+            });
+        }
+
+        function updateOverallResults() {
+            if (examsData.length < 2) return;
+            document.getElementById('overallResults').style.display = 'block';
+            document.getElementById('overallResults').innerHTML = `<div class="card mt-4">
+                <div class="card-body"><h5 class="card-title text-warning">Overall Exam Analysis</h5><canvas id="overallChartCanvas" height="100"></canvas></div></div>`;
+
+            new Chart(document.getElementById('overallChartCanvas').getContext('2d'), {
+                type: 'line',
+                data: { labels: examsData.map(exam => exam.examName), datasets: [{ label: 'Final Scores Across Exams', data: examsData.map(exam => exam.finalScore), borderColor: '#ffca28', fill: false }] }
+            });
+        }
+    </script>
+</body>
+</html>
