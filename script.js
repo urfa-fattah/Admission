@@ -2,16 +2,16 @@
 const exams = [
     { name: "BUET", date: "2025-01-23" },
     { name: "DU", date: "2025-02-15" },
-    { name: "RU", date: "2025-04-10" }, // Conflict example
-    { name: "IUT", date: "2024-06-05" },
+    { name: "KUET", date: "2025-01-11" }, // Conflict example
+    { name: "CUET", date: "2025-01-24" },
     { name: "JU", date: "2024-06-25" },
     { name: "Medical", date: "2025-01-17" },
-    { name: "KUET", date: "2025-01-11" },
+    { name: "RU", date: "2026-01-11" },
     { name: "RUET", date: "2025-02-08" }, // Conflict example
     { name: "SUST", date: "2025-02-22" },
     { name: "GST", date: "2024-08-05" },
     { name: "JnU", date: "2025-02-22" },
-    { name: "CUEK", date: "2025-01-24" } // Added CUEK as per initial request
+    { name: "IUT", date: "2026-01-24" } // Added CUEK as per initial request
 ];
 
 // DOM Elements
