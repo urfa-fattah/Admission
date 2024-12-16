@@ -4,7 +4,7 @@ const exams = [
     { name: "DU", date: "2025-02-15" },
     { name: "KUET", date: "2025-01-11" }, // Conflict example
     { name: "CUET", date: "2025-01-24" },
-    { name: "JU", date: "2024-06-25" },
+    { name: "JU", date: "2025-02-9" },
     { name: "Medical", date: "2025-01-17" },
     { name: "RU", date: "2026-01-11" },
     { name: "RUET", date: "2025-02-08" }, // Conflict example
