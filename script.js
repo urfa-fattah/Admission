@@ -8,10 +8,11 @@ const exams = [
     { name: "Medical", date: "2025-01-17" },
     { name: "RU", date: "2026-01-11" },
     { name: "RUET", date: "2025-02-08" }, // Conflict example
-    { name: "SUST", date: "2025-02-22" },
+    { name: "SUST", date: "2025-02-28" },
     { name: "GST", date: "2024-08-05" },
     { name: "JnU", date: "2025-02-22" },
-    { name: "IUT", date: "2026-01-24" } // Added CUEK as per initial request
+    { name: "IUT", date: "2026-01-24" },
+    { name: "BUETX", date: "2025-03-07" }// Added CUEK as per initial request
 ];
 
 // DOM Elements
